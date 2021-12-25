@@ -7,12 +7,12 @@ M = 80.;
 m_leg = .32*M;
 m_trunk = M-m_leg;
 L0 = 1;
-k_hip = ;
-d_hip = ;
+k_hip = ; %set value
+d_hip = ; %set value
 omega_ret = 50*pi/180;
 
 %leg retraction phi0 = α0 + ω · (t − tapex)
-phi0 = alpha0 + omega_ret * (t-t_apex);
+phi0 = alpha0 + omega_ret * (t-t_apex);     %t_apex still missing
 
 dx = [x(5);                                                 %dx
     x(6);                                                   %dy
