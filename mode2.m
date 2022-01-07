@@ -10,6 +10,7 @@ L0 = 1;
 k_hip = ; %set value
 d_hip = ; %set value
 omega_ret = 50*pi/180;
+alpha0 = 68 * pi / 180;
 
 %leg retraction phi0 = α0 + ω · (t − tapex)
 phi0 = alpha0 + omega_ret * (t-t_apex);     %t_apex still missing
