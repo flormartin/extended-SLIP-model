@@ -7,10 +7,10 @@ M = 80.;
 m_leg = .32*M;
 m_trunk = M-m_leg;
 L0 = 1;
-k_hip = ; %set value
-d_hip = ; %set value
+k_hip = 750; %Nm/rad
+d_hip = 2*sqrt(k_hip*m_leg); %set value
 omega_ret = 50*pi/180;
-alpha0 = 68 * pi / 180;
+alpha0 = 68*pi/180;
 
 %leg retraction phi0 = α0 + ω · (t − tapex)
 phi0 = alpha0 + omega_ret * (t-t_apex);     %t_apex still missing
@@ -22,6 +22,6 @@ dx = [x(5);                                                 %dx
     0.;                                                     %ddx
     -9.81;                                                  %ddy
     (k_hip*(x(3)-phi0)+d_hip*(omega_ret-x(7)))/...          %ddphi
-    (m_leg*(m_trunk/M*.4*L0)^2+m_trunk*(mleg/M*.4*L0)^2);                    %
+    (m_leg*(m_trunk/M*.4*L0)^2+m_trunk*(m_leg/M*.4*L0)^2);  %
     0.];                                                    %ddtheta
 end
