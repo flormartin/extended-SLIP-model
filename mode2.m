@@ -3,25 +3,17 @@ function dx = mode2(t,x)
 % position x and y at center of entire Mass M along leg
 % phi: upper leg angle / theta: lower leg angle
 
-M = 80.;
-m_leg = .32*M;
-m_trunk = M-m_leg;
-L0 = 1;
-k_hip = 750; %Nm/rad
-d_hip = 2*sqrt(k_hip*m_leg); %set value
-omega_ret = 50*pi/180;
-alpha0 = 68*pi/180;
+global g m_L l1 c_phi c_theta d1 d2 alpha0 t_apex omega;
 
 %leg retraction phi0 = α0 + ω · (t − tapex)
-phi0 = alpha0 + omega_ret * (t-t_apex);     %t_apex still missing
+phi0 = alpha0 + omega * (t-t_apex);     %t_apex still missing
 
-dx = [x(5);                                                 %dx
-    x(6);                                                   %dy
-    x(7);                                                   %dphi
-    x(8);                                                   %dtheta
-    0.;                                                     %ddx
-    -9.81;                                                  %ddy
-    (k_hip*(x(3)-phi0)+d_hip*(omega_ret-x(7)))/...          %ddphi
-    (m_leg*(m_trunk/M*.4*L0)^2+m_trunk*(m_leg/M*.4*L0)^2);  %
-    0.];                                                    %ddtheta
+dx = [x(5);
+    x(6);
+    x(7);
+    -10*x(4); %test
+    0.;
+    -g;
+    (-c_phi*(x(3)-phi0)-d1*x(7)-m_L*g*sin(x(3))*l1)/(m_L*l1^2);
+    0.];
 end
