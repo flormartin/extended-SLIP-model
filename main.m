@@ -143,7 +143,7 @@ opti.subject_to(X(3,:) <= pi/4);
 % for solution with guard
 
 % load('relaxed_solution_1.mat')
-load('strict_solution_3.mat')
+load('strict_solution_2.mat')
 opti.set_initial(X, x_sol);
 opti.set_initial(T_fl, time_fl);
 opti.set_initial(T_st, time_st);
