@@ -13,6 +13,9 @@ N = 80;
 N_phase = N/2;
 
 % x = [x y phi theta dx dy dphi dtheta]
+% control input : [dx 
+% alpha0 = opti.xariable(1)
+% omega = opti.variable(1)
 X = opti.variable(8, N+1);
 T_st = opti.variable(1);
 T_fl = opti.variable(1);
@@ -143,7 +146,7 @@ opti.subject_to(X(3,:) <= pi/4);
 % for solution with guard
 
 % load('relaxed_solution_1.mat')
-load('strict_solution_2.mat')
+load('strict_solution_3.mat')
 opti.set_initial(X, x_sol);
 opti.set_initial(T_fl, time_fl);
 opti.set_initial(T_st, time_st);
