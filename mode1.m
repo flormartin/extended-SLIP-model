@@ -1,10 +1,10 @@
-function dx = mode1(t,x)
+function dx = mode1(x,offset)
 % x = [x y phi theta dx dy dphi dtheta]
 % position x and y at center of entire Mass M along leg
 % phi: upper leg angle / theta: lower leg angle
 
 % import parameters
-global g M m_L m_B l0 l1 c_phi c_theta d1 d2 c1 offset;
+global g M m_L m_B l0 l1 c_phi c_theta d1 d2 c1;
 
 phi0 = -35*pi/180;                              %motor set position
 l = sqrt((offset-(x(1)+l1*sin(x(3))))^2+(x(2)-l1*cos(x(3)))^2);  %current spring length
