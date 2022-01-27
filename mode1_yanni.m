@@ -1,13 +1,12 @@
-function dx = mode1(x, offset)
+function dx = mode1(x,phi0,offset, u)
 % x = [x y phi theta dx dy dphi dtheta]
 % position x and y at center of entire Mass M along leg
 % phi: upper leg angle / theta: lower leg angle
 
 % import parameters
 global g M m_L m_B l0 l1 c_phi c_theta d1 d2 c1;
-% global offset;
 
-phi0 = -35*pi/180;                              %motor set position
+%phi0 = -35*pi/180;                              %motor set position
 l = sqrt((offset-(x(1)+l1*sin(x(3))))^2+(x(2)-l1*cos(x(3)))^2);  %current spring length
 
 %theta = x(3) - atan((offset-(x(1)+sin(x(3))*l1))/(x(2)-cos(x(3))*l1));
@@ -24,6 +23,6 @@ dx = [x(5);
     x(7)-((-l1*cos(x(3))*x(7)-x(5))/(x(2)-l1*cos(x(3)))-((-l1*sin(x(3))+offset-x(1))*(l1*sin(x(3))*x(7)+x(6)))/(x(2)-l1*cos(x(3)))^2)/((-l1*sin(x(3))+offset-x(1))^2/(x(2)-l1*cos(x(3)))^2+1);
     -c1*(l0-l)*sin(x(3)-x(4))/M;
     -g + c1*(l0-l)*cos(x(3)-x(4))/M;
-    ddphi;
+    ddphi + u;
     (((2*(-l1*sin(x(3)) + offset - x(1))*(-l1*cos(x(3))*x(7) - x(5)))/(x(2) - l1*cos(x(3)))^2 - (2*(-l1*sin(x(3)) + offset - x(1))^2 *(l1*sin(x(3))*x(7) + x(6)))/(x(2) - l1*cos(x(3)))^3)*((-l1*cos(x(3))*x(7) - x(5))/(x(2) - l1*cos(x(3))) - ((-l1*sin(x(3)) + offset - x(1))*(l1*sin(x(3))*x(7) + x(6)))/(x(2) - l1*cos(x(3)))^2))/((-l1*sin(x(3)) + offset - x(1))^2/(x(2) - l1*cos(x(3)))^2 + 1)^2 - (-((-l1*sin(x(3)) + offset - x(1))*(l1*cos(x(3))*x(7)^2 + l1*sin(x(3))*ddphi + ddy))/(x(2) - l1*cos(x(3)))^2 + (2*(-l1*sin(x(3)) + offset - x(1))*(l1*sin(x(3))*x(7) + x(6))^2)/(x(2) - l1*cos(x(3)))^3 + (l1*sin(x(3))*x(7)^2 - l1*cos(x(3))*ddphi - ddx)/(x(2) - l1*cos(x(3))) - (2*(-l1*cos(x(3))*x(7) - x(5))*(l1*sin(x(3))*x(7) + x(6)))/(x(2) - l1*cos(x(3)))^2)/((-l1*sin(x(3)) + offset - x(1))^2/(x(2) - l1*cos(x(3)))^2 + 1) + ddphi];
 end
