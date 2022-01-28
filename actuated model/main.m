@@ -39,7 +39,7 @@ c1 = 20 * 1000;
 
 c1 = 20*1000;
 %alpha0 = (90 - 62) * pi/ 180.;
-t_apex = 0;
+t_apex = X(6,1)/g;
 %omega = 50*pi/180; %rad/s
 
 %% Flight phase - Mode 2
@@ -50,10 +50,10 @@ h_fl = T_fl/N_phase;    % step width
 for k = 1:N_phase
     
     t = k * h_fl;
-    k1 = mode2Florian(t, X(:,k), alpha0, omega);
-    k2 = mode2Florian(t, X(:,k) + 0.5 * h_fl * k1, alpha0, omega);
-    k3 = mode2Florian(t, X(:,k) + 0.5 * h_fl * k2, alpha0, omega);
-    k4 = mode2Florian(t, X(:,k) + h_fl * k3, alpha0, omega);
+    k1 = mode2(t, X(:,k), alpha0, omega);
+    k2 = mode2(t, X(:,k) + 0.5 * h_fl * k1, alpha0, omega);
+    k3 = mode2(t, X(:,k) + 0.5 * h_fl * k2, alpha0, omega);
+    k4 = mode2(t, X(:,k) + h_fl * k3, alpha0, omega);
     
     x_next = X(:,k) + 1./6. * h_fl * (k1 + 2 * k2 + 2 * k3 + k4);
     
@@ -71,10 +71,10 @@ h_st = T_st/N_phase;    % step width
 % Runge-Kutta
 for k = N_phase+1:N
 
-    k1 = mode1Florian(X(:,k), phi0, offset);
-    k2 = mode1Florian(X(:,k) + 0.5 * h_st * k1, phi0, offset);
-    k3 = mode1Florian(X(:,k) + 0.5 * h_st * k2, phi0, offset);
-    k4 = mode1Florian(X(:,k) + h_st * k3, phi0, offset);
+    k1 = mode1(X(:,k), phi0, offset);
+    k2 = mode1(X(:,k) + 0.5 * h_st * k1, phi0, offset);
+    k3 = mode1(X(:,k) + 0.5 * h_st * k2, phi0, offset);
+    k4 = mode1(X(:,k) + h_st * k3, phi0, offset);
     
     x_next = X(:,k) + 1./6. * h_st * (k1 + 2 * k2 + 2 * k3 + k4);
     
@@ -108,48 +108,49 @@ alpha_td_knee = X(3,N_phase+1) - X(4,N_phase+1);%%%%%%%%%%%%%%%%%%
 % constraint: height of knee computed from hip = height of knee computed from lower leg 
 opti.subject_to(y_td_knee == l0 * cos(alpha_td_knee));
 
-% constraint: height of foot >= 0 at flight phase
-for i = 1:N_phase
-    opti.subject_to( (X(2,i) - l1 * cos(X(3,i)) - cos(X(3,i)-X(4,i)) * l0) >= 0);
-end
-
-% l_s - length of spring (lower leg)
-% actually l_s should equal to 0.6 since at N_phase+1 it hasn't shrunk yet
-l_s = sqrt((offset-(X(1,N_phase+1)+l1*sin(X(3,N_phase+1))))^2+(X(2,N_phase+1)-l1*cos(X(3,N_phase+1)))^2);
-
-% foot on the ground at N_phase+1 (y_foot = 0)
-opti.subject_to( (X(2,N_phase+1) - l1 * cos(X(3,N_phase+1)) - cos(X(3,N_phase+1)-X(4,N_phase+1)) * l_s) == 0);
-% foot start from the ground at time 1 (y_foot(time 1) = 0)
-opti.subject_to( (X(2,1) - l1 * cos(X(3,1)) - cos(X(3,1)-X(4,1)) * l_s) == 0);
-
-
-% %% Path contraints
-% % x = [x y phi theta dx dy dphi dtheta]
-% opti.subject_to(T_fl >= 0.15);  
-% opti.subject_to(T_st >= 0.15);
+% % constraint: height of foot >= 0 at flight phase
+% for i = 1:N_phase
+%     opti.subject_to( (X(2,i) - l1 * cos(X(3,i)) - cos(X(3,i)-X(4,i)) * l0) >= 0);
+% end
 % 
-% opti.subject_to(X(1,1) == 0); % starting point - horizontal coordinate x
-% opti.subject_to(X(2,:) >= .4); % height of hip
-% opti.subject_to(X(3,:) >= -pi*3/4);   % phi 
-% opti.subject_to(X(3,:) <= pi*3/4);
-% opti.subject_to(X(3,1) <= 0);
-% opti.subject_to(X(4,:) >= 0);
-% opti.subject_to(X(4,1) == 0);
-% opti.subject_to(X(4,N_phase) == 0);
-% opti.subject_to(X(5,:) >= 0); % dx - hip keeps moving forward not backward
+% % l_s - length of spring (lower leg)
+% % actually l_s should equal to 0.6 since at N_phase+1 it hasn't shrunk yet
+% l_s = sqrt((offset-(X(1,N_phase+1)+l1*sin(X(3,N_phase+1))))^2+(X(2,N_phase+1)-l1*cos(X(3,N_phase+1)))^2);
 % 
-% % new constraints including the actuation parameters as optimization
-% % variables
-% opti.subject_to(phi0 <= -pi/16);
-% opti.subject_to(phi0 >= -pi/2);
-% opti.subject_to(alpha0 <= pi/2);
-% opti.subject_to(alpha0 >= -pi/2);
-% opti.subject_to(omega >= 10*pi/180);
+% % foot on the ground at N_phase+1 (y_foot = 0)
+% opti.subject_to( (X(2,N_phase+1) - l1 * cos(X(3,N_phase+1)) - cos(X(3,N_phase+1)-X(4,N_phase+1)) * l_s) == 0);
+% % foot start from the ground at time 1 (y_foot(time 1) = 0)
+% opti.subject_to( (X(2,1) - l1 * cos(X(3,1)) - cos(X(3,1)-X(4,1)) * l_s) == 0);
+
+
+%% Path contraints
+% x = [x y phi theta dx dy dphi dtheta]
+opti.subject_to(T_fl >= 0.15);  
+opti.subject_to(T_st >= 0.15);
+
+opti.subject_to(X(1,1) == 0); % starting point - horizontal coordinate x
+opti.subject_to(X(2,:) >= .4); % height of hip
+opti.subject_to(X(3,:) >= -pi*3/4);   % phi 
+opti.subject_to(X(3,:) <= pi*3/4);
+opti.subject_to(X(3,1) <= 0);
+opti.subject_to(X(4,:) >= 0);
+opti.subject_to(X(4,1) == 0);
+opti.subject_to(X(4,N_phase) == 0);
+opti.subject_to(X(5,:) >= 0); % dx - hip keeps moving forward not backward
+opti.subject_to(X(6,1) > 0);
+
+% new constraints including the actuation parameters as optimization
+% variables
+opti.subject_to(phi0 <= 0);
+opti.subject_to(phi0 >= -pi/2);
+opti.subject_to(alpha0 <= pi/2);
+opti.subject_to(alpha0 >= -pi/2);
+opti.subject_to(omega >= 0);
 
 %% Initial guess
 
 % for relaxed solution - without guard 
-x0 = [0.; .8; -35 * pi/ 180.; 0.; 5; .5; 0; 0];
+x0 = [0.; .95; -35 * pi/ 180.; 0.; 5; .5; 0; 0];
 opti.set_initial(X, repmat(x0,1,N+1));
 opti.set_initial(phi0, -35*pi/180);
 opti.set_initial(alpha0, -35*pi/180);
@@ -168,6 +169,7 @@ opti.set_initial(T_st, 0.2);
 % show progress of optimization 
 opti.callback(@(i) plot(opti.debug.value(X(1,1:N+1)), opti.debug.value(X(2,1:N+1)),'b') )
 
+% solver_options = struct('max_iter',400);
 opti.solver('ipopt');   % interior point method
 sol = opti.solve();
 
