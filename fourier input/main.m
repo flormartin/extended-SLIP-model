@@ -121,7 +121,7 @@ opti.subject_to(X(5,1) > 0);    % hip moving upwards at liftoff
 % knee angle theta constraints
 % opti.subject_to(X(3,:) >= atan((offset-(X(1,:)+sin(X(3,:))*l1))./(X(2,:)-cos(X(3,:))*l1)));
 % opti.subject_to(X(3,1) == atan((offset-(X(1,N+1)+sin(X(3,N+1))*l1))/(X(2,N+1)-cos(X(3,N+1))*l1))); %leads to very small step solution
-opti.subject_to(X(3,N_phase+1) == atan((offset-(X(1,N_phase+1)+sin(X(3,N_phase+1))*l1))/(X(2,N_phase+1)-cos(X(3,N_phase+1))*l1)));
+% opti.subject_to(X(3,N_phase+1) == atan((offset-(X(1,N_phase+1)+sin(X(3,N_phase+1))*l1))/(X(2,N_phase+1)-cos(X(3,N_phase+1))*l1)));
 
 % phi0 constraints
 k=1:n_coeff;
