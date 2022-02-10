@@ -120,7 +120,7 @@ opti.subject_to(X(5,1) > 0);    % hip moving upwards at liftoff
 
 % knee angle theta constraints
 % opti.subject_to(X(3,:) >= atan((offset-(X(1,:)+sin(X(3,:))*l1))./(X(2,:)-cos(X(3,:))*l1)));
-% opti.subject_to(X(3,1) == atan((offset-(X(1,N+1)+sin(X(3,N+1))*l1))/(X(2,N+1)-cos(X(3,N+1))*l1))); %leads to very small step solution
+opti.subject_to(X(3,1) == atan((offset-(X(1,N+1)+sin(X(3,N+1))*l1))/(X(2,N+1)-cos(X(3,N+1))*l1))); %leads to very small step solution
 % opti.subject_to(X(3,N_phase+1) == atan((offset-(X(1,N_phase+1)+sin(X(3,N_phase+1))*l1))/(X(2,N_phase+1)-cos(X(3,N_phase+1))*l1)));
 
 % phi0 constraints
@@ -133,32 +133,26 @@ opti.subject_to(abs(ones(size(time))*a(1) + sum(ones(size(time))*a(k+1)'.*cos(ti
 %% Initial guess
 
 % for relaxed solution - without guard 
-x0 = [0.; 1.05; -35 * pi/ 180.; 2.5; 2; 0];
-% x0 = ones(6,1)*.5;
-opti.set_initial(X, repmat(x0,1,N+1));
-opti.set_initial(a,ones(1,n_coeff+1))
-opti.set_initial(b,ones(1,n_coeff))
-opti.set_initial(T_fl, 0.3);
-opti.set_initial(T_st, 0.3);
+% x0 = [0.; 1.05; -35 * pi/ 180.; 2.5; 2; 0];
+% % x0 = ones(6,1)*.5;
+% opti.set_initial(X, repmat(x0,1,N+1));
+% opti.set_initial(a,ones(1,n_coeff+1))
+% opti.set_initial(b,ones(1,n_coeff))
+% opti.set_initial(T_fl, 0.3);
+% opti.set_initial(T_st, 0.3);
 
 % for solution with guard
 
-% load('relaxed.mat')
-% opti.set_initial(X, x_sol);
-% opti.set_initial(T_fl, T_fl_sol);
-% opti.set_initial(T_st, T_st_sol);
-% opti.set_initial(a, a_sol);
-% opti.set_initial(b, b_sol);
+load('relaxed3.mat')
+opti.set_initial(X, x_sol);
+opti.set_initial(T_fl, T_fl_sol);
+opti.set_initial(T_st, T_st_sol);
+opti.set_initial(a, a_sol);
+opti.set_initial(b, b_sol);
 
 
 % show progress of optimization 
 opti.callback(@(i) plot(opti.debug.value(X(1,:)), opti.debug.value(X(2,:)),'b') )
-
-options = struct;                                                     % alternative 2
-options.print_time = false;
-options.ipopt.max_iter = 800;
-opti.solver('ipopt',options);   % interior point method
-sol = opti.solve();
 
 %% Plot Solution
 

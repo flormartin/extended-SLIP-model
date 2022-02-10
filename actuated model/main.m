@@ -34,10 +34,11 @@ c_theta = 1000;
 d2 = 2*sqrt(c_theta*m_L);
 c1 = 20 * 1000;
 
-c1 = 20*1000;
-%alpha0 = (90 - 62) * pi/ 180.;
 t_apex = X(5,1)/g;              %vertical initial speed divided by g
-%omega = 50*pi/180; %rad/s
+
+% alpha0 = (90 - 60) * pi/ 180.;
+% omega = 50*pi/180; %rad/s
+% phi0 = -35*pi/180;
 
 %% Flight phase - Mode 2
 
@@ -88,11 +89,12 @@ opti.subject_to(X(6,1) == X(6,N+1));
 
 %% Guard conditions
 
-% liftoff
-x_lo_knee = X(1,N+1) - offset + l1 * sin(X(3,N+1)); 
-y_lo_knee = X(2,N+1) - l1 * cos(X(3,N+1)) ;
+% % liftoff
+% x_lo_knee = X(1,1) - offset + l1 * sin(X(3,1)); 
+% y_lo_knee = X(2,1) - l1 * cos(X(3,1)) ;
 % constraint: length of lower leg equal to 0.6
-opti.subject_to(sqrt(x_lo_knee^2 + y_lo_knee^2) == l0);  
+% opti.subject_to(sqrt(x_lo_knee^2 + y_lo_knee^2) == l0);
+% opti.subject_to(sqrt((X(1,N+1)-offset)^2+X(2,N+1)^2) == L0);
 
 % touchdown: height of hip = cos(phi)*L0 
 opti.subject_to(X(2,N_phase+1) == L0 * cos(X(3,N_phase+1)));
@@ -103,13 +105,19 @@ opti.subject_to(T_fl >= 0.2);
 opti.subject_to(T_st >= 0.2);
 
 opti.subject_to(X(1,1) == 0); % starting point - horizontal coordinate x
+opti.subject_to(X(1,N+1) >= 0.1); % minimum length of step
 opti.subject_to(X(2,:) >= .4); % height of hip
 opti.subject_to(X(3,:) >= -pi/2);   % phi 
 opti.subject_to(X(3,:) <= pi/2);
-opti.subject_to(X(3,1) <= 0);
-% opti.subject_to(X(3,N+1) == atan((offset-(X(1,N+1)+sin(X(3,N+1))*l1))/(X(2,N+1)-cos(X(3,N+1))*l1))); %leads to very small step solution
+% opti.subject_to(X(3,1) <= 0);
+% opti.subject_to(X(4,1) == 5); % fix initial speed
+
+opti.subject_to(X(3,N_phase+1)-atan((offset-(X(1,N_phase+1)+sin(X(3,N_phase+1))*l1))/(X(2,N_phase+1)-cos(X(3,N_phase+1))*l1))==0);
+% opti.subject_to(atan(X(3,:)-(offset-(X(1,:)+sin(X(3,:))*l1))./(X(2,:)-cos(X(3,:))*l1))>=0);
+% opti.subject_to(X(3,N+1)-atan((offset-(X(1,N+1)+sin(X(3,N+1))*l1))/(X(2,N+1)-cos(X(3,N+1))*l1))==0);
+
 opti.subject_to(X(4,:) >= 0);   % dx - hip keeps moving forward not backward
-opti.subject_to(X(5,1) > 0);    % hip moving upwards at liftoff
+opti.subject_to(X(5,1) >= 1);    % hip moving at 5m/s liftoff
 
 % new constraints including the actuation parameters as optimization
 % variables
@@ -122,7 +130,7 @@ opti.subject_to(omega >= 0);
 %% Initial guess
 
 % for relaxed solution - without guard 
-% x0 = [0.; 1.05; -35 * pi/ 180.; 2.5; 2; 0];
+% x0 = [0.; .9; -10 * pi/ 180.; 5; 3; 0];
 % % x0 = ones(6,1)*.5;
 % opti.set_initial(X, repmat(x0,1,N+1));
 % opti.set_initial(phi0, -35*pi/180);
@@ -189,6 +197,8 @@ end
 plot(x_foot, y_foot,'-','Color','r');  %  foot
 plot(x_knee, y_knee,'-','Color','r');  %  knee
 plot(x_hip_sol, y_hip_sol,'-','Color','r');  %  hip
+
+figure; plot(theta_sol*180/pi)
 
 %% Save solution
 
