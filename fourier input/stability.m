@@ -1,7 +1,7 @@
 clc; clear all; close all;
 
 %load solution
-load('strict2.mat')
+load('strict_1coeff.mat')
 
 [ap,i] = min(abs(x_sol(5,41:end)));
 i = i + 40;
@@ -18,29 +18,29 @@ plot(x_sol(3,i),x_sol(6,i),'.','color','k','markersize',20)
 
 %calculate dP and eigenvalues
 
-poincare(x0,phi0_sol,alpha0_sol, omega_sol)
+poincare(x0,a_sol,b_sol,T_fl_sol+T_st_sol)
 x0
 
-r = zeros(6,1);
-epsilon = 1e-2;
-r(2) = epsilon;
-
-df = (poincare(x0+r,phi0_sol,alpha0_sol,omega_sol) - poincare(x0-r,phi0_sol,alpha0_sol,omega_sol))...
-    /(2.*epsilon);
-dP = df(2);
-
-if abs(eig(dP))<1
-    disp(strcat('eig(dP)=',num2str(eig(dP))))
-    disp('|eig(dP)| < 1')
-    disp('  => stable')
-else
-    disp(strcat('eig(dP)=',num2str(eig(dP))))
-    disp('|eig(dP)| >= 1')
-    disp('  => unstable')
-end    
+% r = zeros(6,1);
+% epsilon = 1e-2;
+% r(2) = epsilon;
+% 
+% df = (poincare(x0+r,phi0_sol,alpha0_sol,omega_sol) - poincare(x0-r,phi0_sol,alpha0_sol,omega_sol))...
+%     /(2.*epsilon);
+% dP = df(2);
+% 
+% if abs(eig(dP))<1
+%     disp(strcat('eig(dP)=',num2str(eig(dP))))
+%     disp('|eig(dP)| < 1')
+%     disp('  => stable')
+% else
+%     disp(strcat('eig(dP)=',num2str(eig(dP))))
+%     disp('|eig(dP)| >= 1')
+%     disp('  => unstable')
+% end    
     
 
-function [P, x_full, te] = poincare(x0, phi0, alpha0, omega)
+function [P, x_full, te] = poincare(x0, a, b, T)
 
 % Parameters
 global L0 l0 l1 M m_B m_L g c_phi d1 c_theta d2 c1 t_apex offset;
@@ -70,22 +70,17 @@ t_full = [];
 
 tspan = 0:step_width:4.0;
 offset = x0(1) + L0 * sin(x0(3));
+
 % x0 = xe';
-[tout, xout, te, xe, ie] = ode45(@(t,x)mode1st(t,x,phi0,offset), tspan, x0, opts_stance);
+[tout, xout, te, xe, ie] = ode45(@(t,x)mode1st(t,x,a,b,T,offset), tspan, x0, opts_stance);
 x_full = [x_full; xout];
 t_full = [t_full; tout];
 
 t_apex = te+xe(5)/g;
 tspan = te:step_width:4.0;
 x0 = xe';
-[tout, xout, te, xe, ie] = ode45(@(t,x)mode2(t,x,alpha0,omega), tspan, x0, opts_flight);
-x_full = [x_full; xout];
-t_full = [t_full; tout];
 
-tspan = te:step_width:4.0;
-offset = xe(1) + L0 * sin(xe(3));
-x0 = xe';
-[tout, xout, te, xe, ie] = ode45(@(t,x)mode1st(t,x,phi0,offset), tspan, x0, opts_stance);
+[tout, xout, te, xe, ie] = ode45(@(t,x)mode2st(t,x,a,b,T), tspan, x0, opts_flight);
 x_full = [x_full; xout];
 t_full = [t_full; tout];
 

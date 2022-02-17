@@ -34,7 +34,6 @@ c_theta = 1000;
 d2 = 2*sqrt(c_theta*m_L);
 c1 = 20 * 1000;
 
-t_apex = X(5,1)/g;              %vertical initial speed divided by g
 
 % alpha0 = (90 - 60) * pi/ 180.;
 % omega = 50*pi/180; %rad/s
@@ -61,6 +60,7 @@ for k = 1:N_phase
     
 end
 
+t_apex = T_st + X(5,N_phase+1)/g;              %vertical initial speed divided by g
 
 %% Flight phase - Mode 2
 h_fl = T_fl/N_phase;    % step width
@@ -68,7 +68,7 @@ h_fl = T_fl/N_phase;    % step width
 % Runge-Kutta
 for k = N_phase+1:N
     
-    t = k * h_fl;
+    t =  T_st + k * h_fl;
     k1 = mode2(t, X(:,k), alpha0, omega);
     k2 = mode2(t, X(:,k) + 0.5 * h_fl * k1, alpha0, omega);
     k3 = mode2(t, X(:,k) + 0.5 * h_fl * k2, alpha0, omega);
@@ -111,8 +111,8 @@ opti.subject_to(X(6,1) == X(6,N+1));
 %% Guard conditions
 
 % % liftoff
-x_lo_knee = X(1,N_phase) - offset + l1 * sin(X(3,N_phase)); 
-y_lo_knee = X(2,N_phase) - l1 * cos(X(3,N_phase)) ;
+x_lo_knee = X(1,N_phase+1) - offset + l1 * sin(X(3,N_phase+1)); 
+y_lo_knee = X(2,N_phase+1) - l1 * cos(X(3,N_phase+1)) ;
 % constraint: length of lower leg equal to 0.6
 opti.subject_to(sqrt(x_lo_knee^2 + y_lo_knee^2) == l0);
 % opti.subject_to(sqrt((X(1,N_phase+1)-offset)^2+X(2,N_phase+1)^2) == L0);

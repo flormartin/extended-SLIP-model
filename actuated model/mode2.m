@@ -1,12 +1,12 @@
 function dx = mode2(t,x,alpha0,omega)
-%x = [x y phi theta dx dy dphi dtheta]
+%x = [x y phi dx dy dphi]
 % position x and y at center of entire Mass M along leg
 % phi: upper leg angle / theta: lower leg angle
 
 global g m_L l1 c_phi c_theta d1 d2 t_apex;
 
 %leg retraction phi0 = α0 + ω · (t − tapex)
-phi_0 = alpha0 + omega * (t-t_apex);     %t_apex still missing
+phi_0 = alpha0 + omega * (t-t_apex);
 
 dx = [x(4);
     x(5);
