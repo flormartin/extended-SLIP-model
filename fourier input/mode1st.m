@@ -1,9 +1,9 @@
-function dx = mode1(t,x,a,b,T,offset)
+function dx = mode1st(t,x,a,b,T,offset)
 % x = [x y phi theta dx dy dphi dtheta]
 % position x and y at center of entire Mass M along leg
 % phi: upper leg angle / theta: lower leg angle
 
-phi0 = a(1) + sum(a(2).*cos(t*2*pi/T)+b.*sin(t*2*pi/T),1);
+phi0 = a(1) + a(2)*cos(t*2*pi/T) +b*sin(t*2*pi/T);
 
 % import parameters
 global g M m_L m_B l0 l1 c_phi c_theta d1 d2 c1;

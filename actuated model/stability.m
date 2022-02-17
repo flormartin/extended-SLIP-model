@@ -1,12 +1,11 @@
 clc; clear all; close all;
 
 %load solution
-load('strict2.mat')
+load('strict3.mat')
 
 [ap,i] = min(abs(x_sol(5,41:end)));
 i = i + 40;
 x0 = [0;x_sol(2:end,i)]';
-x0 = x_sol(:,1)';
 
 %limit cycle
 figure; hold on
@@ -18,27 +17,23 @@ plot(x_sol(3,i),x_sol(6,i),'.','color','k','markersize',20)
 
 %calculate dP and eigenvalues
 
-poincare(x0,phi0_sol,alpha0_sol, omega_sol)
-x0
+% poincare(x0,phi0_sol,alpha0_sol, omega_sol)
+% x0
 
-r = zeros(6,1);
-epsilon = 1e-2;
-r(2) = epsilon;
+epsilon = 1e-5;
+dP = [];
 
-df = (poincare(x0+r,phi0_sol,alpha0_sol,omega_sol) - poincare(x0-r,phi0_sol,alpha0_sol,omega_sol))...
-    /(2.*epsilon);
-dP = df(2);
+for i = 2:6
+    r = zeros(1,6);
+    r(i) = epsilon;
+    df = (poincare(x0+r,phi0_sol,alpha0_sol,omega_sol) - poincare(x0-r,phi0_sol,alpha0_sol,omega_sol))...
+        /(2.*epsilon);
+    dP(i-1,:) = df(2:6);
+end
 
-if abs(eig(dP))<1
-    disp(strcat('eig(dP)=',num2str(eig(dP))))
-    disp('|eig(dP)| < 1')
-    disp('  => stable')
-else
-    disp(strcat('eig(dP)=',num2str(eig(dP))))
-    disp('|eig(dP)| >= 1')
-    disp('  => unstable')
-end    
-    
+dP
+eig(dP)
+
 
 function [P, x_full, te] = poincare(x0, phi0, alpha0, omega)
 
@@ -61,23 +56,9 @@ opts_apex = odeset('Events', @guard_apex);
 step_width=.001;
 x_full = [];
 t_full = [];
-% 
-% t_apex = x0(5)/g;
-% tspan = 0:step_width:4.0;
-% [tout, xout, te, xe, ie] = ode45(@(t,x)mode2(t,x,alpha0,omega), tspan, x0, opts_flight);
-% x_full = [x_full; xout];
-% t_full = [t_full; tout];
 
+t_apex = x0(5)/g;
 tspan = 0:step_width:4.0;
-offset = x0(1) + L0 * sin(x0(3));
-% x0 = xe';
-[tout, xout, te, xe, ie] = ode45(@(t,x)mode1st(t,x,phi0,offset), tspan, x0, opts_stance);
-x_full = [x_full; xout];
-t_full = [t_full; tout];
-
-t_apex = te+xe(5)/g;
-tspan = te:step_width:4.0;
-x0 = xe';
 [tout, xout, te, xe, ie] = ode45(@(t,x)mode2(t,x,alpha0,omega), tspan, x0, opts_flight);
 x_full = [x_full; xout];
 t_full = [t_full; tout];
@@ -89,12 +70,16 @@ x0 = xe';
 x_full = [x_full; xout];
 t_full = [t_full; tout];
 
-figure;plot(x_full(:,1),x_full(:,2))
-figure;plot(x_full(:,2),x_full(:,5))
-figure;plot(x_full(:,3),x_full(:,6))
+t_apex = te+xe(5)/g;
+tspan = te:step_width:4.0;
+x0 = xe';
+[tout, xout, te, xe, ie] = ode45(@(t,x)mode2(t,x,alpha0,omega), tspan, x0, opts_apex);
+x_full = [x_full; xout];
+t_full = [t_full; tout];
 
-figure;plot(t_full,x_full(:,3))
-% figure;plot(t_full,x_full(:,5))
+% figure;plot(x_full(:,1),x_full(:,2))
+% figure;plot(x_full(:,2),x_full(:,5))
+% figure;plot(x_full(:,3),x_full(:,6))
 
 P = xe;
 end

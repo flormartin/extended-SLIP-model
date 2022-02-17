@@ -110,13 +110,14 @@ opti.subject_to(T_fl >= 0.15);
 opti.subject_to(T_st >= 0.15);
 
 opti.subject_to(X(1,1) == 0);           % starting point - horizontal coordinate x
+opti.subject_to(X(2,1) >= 0.9); 
 opti.subject_to(0.1 < X(1,N+1) < 5);    % length of step
 opti.subject_to(0.4 < X(2,:) < 2);      % height of hip
 opti.subject_to(-pi/2 < X(3,:) < pi/2); % phi 
 opti.subject_to(X(4,:) >= 0);           % dx - hip keeps moving forward not backward
 % opti.subject_to(X(4,1) == 5);           % initial speed
-% opti.subject_to(3.5 < X(4,1) < 6);      % initial speed range
-opti.subject_to(mean(X(4,:)) == 3.6149);
+opti.subject_to(3.5 < X(4,1) < 6);      % initial speed range
+% opti.subject_to(mean(X(4,:)) == 3.6149);
 % opti.subject_to(abs(X(6,:)) <= 100); %limit rotation speed around hip
 
 %theta constraints

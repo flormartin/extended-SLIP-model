@@ -66,7 +66,7 @@ t_apex = T_st + X(5,N_phase+1)/g;              %vertical initial speed divided b
 % Runge-Kutta
 for k = N_phase+1:N
     
-    t = T_st + k * h_fl;
+    t = T_st + (k-N_phase) * h_fl;
     k1 = mode2(t, X(:,k), alpha0, omega);
     k2 = mode2(t, X(:,k) + 0.5 * h_fl * k1, alpha0, omega);
     k3 = mode2(t, X(:,k) + 0.5 * h_fl * k2, alpha0, omega);
@@ -109,8 +109,8 @@ opti.subject_to(0.1 < X(1,N+1) < 5);    % length of step
 opti.subject_to(0.4 < X(2,:) < 2);      % height of hip
 opti.subject_to(-pi/2 < X(3,:) < pi/2); % phi 
 opti.subject_to(X(4,:) >= 0);           % dx - hip keeps moving forward not backward
-% opti.subject_to(X(4,1) == 5);           % initial speed
-opti.subject_to(3.5 < X(4,1) < 6);      % initial speed range
+opti.subject_to(X(4,1) == 5);           % initial speed
+% opti.subject_to(3.5 < X(4,1) < 6);      % initial speed range
 
 %theta constraints
 % opti.subject_to(X(3,1)-atan((offset-(X(1,1)+sin(X(3,1))*l1))/(X(2,1)-cos(X(3,1))*l1))==0);
@@ -124,24 +124,24 @@ opti.subject_to(0 < omega < 100*pi/180);
 
 %% Initial guess
 
-% % for relaxed solution - without guard 
-% x0 = [0.; .8; 68 * pi/ 180.; 5; -1; 0];
-% % x0 = ones(6,1)*.5;
-% opti.set_initial(X, repmat(x0,1,N+1));
-% opti.set_initial(phi0, -35*pi/180);
-% opti.set_initial(alpha0, -35*pi/180);
-% opti.set_initial(omega, 50*pi/180);
-% opti.set_initial(T_fl, 0.2);
-% opti.set_initial(T_st, 0.2);
+% for relaxed solution - without guard 
+x0 = [0.; .8; 68 * pi/ 180.; 5; -1; 0];
+% x0 = ones(6,1)*.5;
+opti.set_initial(X, repmat(x0,1,N+1));
+opti.set_initial(phi0, -35*pi/180);
+opti.set_initial(alpha0, -35*pi/180);
+opti.set_initial(omega, 50*pi/180);
+opti.set_initial(T_fl, 0.2);
+opti.set_initial(T_st, 0.2);
 
-% for solution with guard
-load('relaxed3_.mat')
-opti.set_initial(X, x_sol);
-opti.set_initial(T_fl, T_fl_sol);
-opti.set_initial(T_st, T_st_sol);
-opti.set_initial(phi0, phi0_sol);
-opti.set_initial(alpha0, alpha0_sol);
-opti.set_initial(omega, omega_sol);
+% % for solution with guard
+% load('relaxed3_.mat')
+% opti.set_initial(X, x_sol);
+% opti.set_initial(T_fl, T_fl_sol);
+% opti.set_initial(T_st, T_st_sol);
+% opti.set_initial(phi0, phi0_sol);
+% opti.set_initial(alpha0, alpha0_sol);
+% opti.set_initial(omega, omega_sol);
 
 % show progress of optimization 
 opti.callback(@(i) plot(opti.debug.value(X(1,:)), opti.debug.value(X(2,:)),'b') )
