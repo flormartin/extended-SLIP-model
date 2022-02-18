@@ -31,8 +31,8 @@ for i = 2:6
     dP(i-1,:) = df(2:6);
 end
 
-dP
-eig(dP)
+dP = dP;
+eigenvalues = eig(dP)
 
 
 function [P, x_full, te] = poincare(x0, phi0, alpha0, omega)
