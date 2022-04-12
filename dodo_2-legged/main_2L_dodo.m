@@ -1,7 +1,4 @@
 clc; clear all; close all;
-addpath('C:\Users\loyst\OneDrive - Technische Universitat Munchen\Studium\Master_EPM-in-Maschinenbau_TUM\05_WS21-22\02_Fächer\09_Dodo-Alive-MechanismDesign\Casadi')
-import casadi.*
-
 
 %% Initialization
 
