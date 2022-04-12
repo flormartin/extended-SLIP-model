@@ -7,7 +7,7 @@ In a group project with three students, the goal was to find optimal control par
 
 ## Extensions
 
-In this work, the SLIP model is physically extended by a knee with an additional *leg mass*. Unlike the original model, the extended model includes *non-conservative forces* in the form of two mass-spring-damper systems about the hip and knee.
+In this work, the SLIP model is physically extended by a knee with an additional *leg mass*. Unlike the original model, the extended model includes *non-conservative forces* in the form of two mass-spring-damper systems about the hip and knee. Lastly, two-legged walking of the model is tested with an estimation for physical parameters of a Dodo.
 
 ## Actuation
 
