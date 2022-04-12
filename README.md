@@ -1,7 +1,7 @@
 # Extended SLIP Model
 This repository shows the work of the practical course *Dodo Alive* at the [Munich Institute of Robotics and Machine Intelligence](https://www.mirmi.tum.de/).
 
-##Introduction
+## Introduction
 
 In a group project with three students, the goal was to find optimal control parameters to produce periodical walking gaits in an extended single-legged SLIP model. The work is based on a model presented by [Peuker et al. (2012)](https://ieeexplore.ieee.org/abstract/document/6290742) that is used for comparison to the simple SLIP model in humanoid walking.
 
